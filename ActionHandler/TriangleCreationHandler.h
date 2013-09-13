@@ -23,14 +23,36 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_TRIANGLECREATIONHANDLER_H
+#define CK_TRIANGLECREATIONHANDLER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+#include "ActionHandler.h"
+#include "../Layer.h"
+#include "../Actions/ActionManager.h"
+#include "../Actions/CreateTriangle.h"
 
-    return 0;
+namespace ck {
+
+class TriangleCreationHandler : public ActionHandler {
+private:
+    Selection* selection;
+    CreateTriangle* createTriangle;
+    ActionManager* actionManager;
+    RenderManager* renderManager;
+    Layer* selectionLayer;
+    int screenHeight;
+    Vec2 mousePosition;
+    int verticesCreated;
+    Vec2 v1Position, v2Position, v3Position;
+    int v1, v2, v3;
+    int lv1, lv2, lv3;
+    int l1, l2, l3;
+public:
+    TriangleCreationHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager, RenderManager* renderManager, Layer* selectionLayer, int screenHeight);
+    bool handleEvent(SDL_Event* event);
+};
+
 }
+
+#endif // CK_TRIANGLECREATIONHANDLER_H

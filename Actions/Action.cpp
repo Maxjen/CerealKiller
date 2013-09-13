@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2012 Max Jensen <email>
+    Copyright (c) 2011 Max Jensen <email>
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation
@@ -23,14 +23,27 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#include "Action.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+Action::~Action() {
+    // do nothing
 }
+
+}
+
+/*mtAction::mtAction(const mtAction& action) {
+}
+
+mtAction* mtAction::clone() const {
+	return new Derived(static_cast<const Derived&>(*this));
+}*/
+/*mtAction* mtAction::clone() {
+	return new mtAction(*this);
+}*/
+
+/*mtAction& mtAction::copyWithValuesFromPointers() {
+	return *this;
+}*/

@@ -23,14 +23,40 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_SHADER_H
+#define CK_SHADER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+/*#define GL3_PROTOTYPES 1
+#include <GL3/gl3.h>*/
+#include <GL/glew.h>
 
-    return 0;
+#include "SDL2/SDL_image.h"
+
+#include <map>
+#include <string>
+//#include <cstdio>
+
+using std::map;
+using std::string;
+
+namespace ck {
+
+class Shader {
+protected:
+    GLuint programId;
+    void printProgramLog(GLuint program);
+    void printShaderLog(GLuint shader);
+    GLuint loadShader(const char* filename, GLenum shaderType);
+    string fileToString(const char *filename);
+public:
+    Shader();
+    virtual ~Shader();
+
+    void bind();
+    void unbind();
+};
+
 }
+
+#endif // CK_SHADER_H

@@ -23,14 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#include "SelectVertices.h"
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+SelectVertices::SelectVertices(Selection* selection, vector<int> newVertices, bool replaceCurrentSelection) {
+    this->selection = selection;
+    if(replaceCurrentSelection)
+        this->oldVertices = selection->getSelectedVertices();
+    this->newVertices = newVertices;
+}
 
-    return 0;
+void SelectVertices::apply() {
+    if (!oldVertices.empty()) {
+        for (unsigned int i = 0; i < oldVertices.size(); i++)
+            selection->selectVertex(oldVertices[i]);
+    }
+    for (unsigned int i = 0; i < newVertices.size(); i++) {
+        selection->selectVertex(newVertices[i]);
+    }
+}
+
+void SelectVertices::revert() {
+    for (unsigned int i = 0; i < newVertices.size(); i++)
+        selection->selectVertex(newVertices[i]);
+    if (!oldVertices.empty()) {
+        for (unsigned int i = 0; i < oldVertices.size(); i++)
+            selection->selectVertex(oldVertices[i]);
+    }
+}
+
 }

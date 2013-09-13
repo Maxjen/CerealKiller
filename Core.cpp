@@ -27,107 +27,6 @@
 
 namespace ck {
 
-/*Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath) {
-    char* vsSource = fileTostring(vertexShaderPath);
-    char* fsSource = fileTostring(fragmentShaderPath);
-
-    vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShaderId, 1, (const char **)&vsSource, NULL);
-    glCompileShader(vertexShaderId);
-    printLog(vertexShaderId);
-
-    fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShaderId, 1, (const char **)&fsSource, NULL);
-    glCompileShader(fragmentShaderId);
-    printLog(fragmentShaderId);
-
-    free(vsSource);
-    free(fsSource);
-
-    programId = glCreateProgram();
-        glAttachShader(programId, vertexShaderId);
-        glAttachShader(programId, fragmentShaderId);
-    glLinkProgram(programId);
-    printLog(programId);
-}
-
-Shader::~Shader() {
-    GLenum ErrorCheckValue = glGetError();
-
-    glUseProgram(0);
-
-    glDetachShader(programId, vertexShaderId);
-    glDetachShader(programId, fragmentShaderId);
-
-    glDeleteShader(vertexShaderId);
-    glDeleteShader(fragmentShaderId);
-    glDeleteProgram(programId);
-
-    ErrorCheckValue = glGetError();
-    if (ErrorCheckValue != GL_NO_ERROR) {
-        fprintf(
-            stderr,
-            "ERROR: Could not destroy the shaders: %s \n",
-            gluErrorString(ErrorCheckValue)
-        );
-
-        //exit(-1);
-    }
-}
-
-char* Shader::fileTostring(const char *path) {
-    FILE *fd;
-    long len, r;
-    char *str;
-
-    if (!(fd = fopen(path, "r")))
-    {
-        fprintf(stderr, "Can't open file '%s' for reading\n", path);
-        return NULL;
-    }
-
-    fseek(fd, 0, SEEK_END);
-    len = ftell(fd);
-
-    printf("File '%s' is %ld long\n", path, len);
-
-    fseek(fd, 0, SEEK_SET);
-
-    if (!(str = (char*)malloc(len * sizeof(char))))
-    {
-        fprintf(stderr, "Can't malloc space for '%s'\n", path);
-        return NULL;
-    }
-
-    r = fread(str, sizeof(char), len, fd);
-
-    str[r - 1] = '\0'; // Shader sources have to term with null
-
-    fclose(fd);
-
-    return str;
-}
-
-void Shader::printLog(GLuint obj) {
-    int infologLength = 0;
-    int maxLength;
-
-    if(glIsShader(obj))
-        glGetShaderiv(obj,GL_INFO_LOG_LENGTH,&maxLength);
-    else
-        glGetProgramiv(obj,GL_INFO_LOG_LENGTH,&maxLength);
-
-    char infoLog[maxLength];
-
-    if (glIsShader(obj))
-        glGetShaderInfoLog(obj, maxLength, &infologLength, infoLog);
-    else
-        glGetProgramInfoLog(obj, maxLength, &infologLength, infoLog);
-
-    if (infologLength > 0)
-        printf("%s\n",infoLog);
-}*/
-
 void Core::sdldie(const char *msg) {
     printf("%s: %s\n", msg, SDL_GetError());
     SDL_Quit();
@@ -181,72 +80,196 @@ Core::Core(int screenWidth, int screenHeight) {
     // This makes our buffer swap syncronized with the monitor's vertical refresh
     SDL_GL_SetSwapInterval(1);
 
-    // Clear our buffer with a black background
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+    //printf("Initializing glew\n");
+    GLenum status = glewInit();
+    if(status != GLEW_OK) {
+        fprintf(stderr, "INFO: glew couldn't be initialized. Exit\nGLEW Error: %s", glewGetErrorString(status));
+        close();
+    }
 
-    // Swap our back buffer to the front
-    SDL_GL_SwapWindow(mainwindow);
+    actionHandler = nullptr;
 
-    SDL_Delay(2000);
-
-    //actionHandler = nullptr;
-	
-    //resourceManager = new ResourceManager();
-	
-	
-    /*printf("Initializing glew\n");
-	GLenum err = glewInit();
-	if(err != GLEW_OK) {
-		fprintf(stderr, "INFO: glew couldn't be initialized. Exit\n");
-		close();
-	}
-	if (GLEW_VERSION_2_0)
-		fprintf(stderr, "INFO: OpenGL 2.0 supported, proceeding\n");
-	else
-	{
-		fprintf(stderr, "INFO: OpenGL 2.0 not supported. Exit\n");
-		close();
-    }*/
-
-    /*triangleShader = new Shader("triangle.vert", "triangle.frag");
-
-    pointLineShader = new Shader("pointLine.vert", "pointLine.frag");
-
-    radialBlurShader = new Shader("radialBlur.vert", "radialBlur.frag");
-
-    renderManager = new RenderManager(resourceManager, pointLineShader->getProgramId(), pointLineShader->getProgramId(), triangleShader->getProgramId());
+    resourceManager = new ResourceManager();
+    renderManager = new RenderManager(resourceManager);
 
     triangles = new Triangles(renderManager);
+
     selection = new Selection(renderManager, triangles);
+    glPointSize(3.0f);
+
     selectionLayer = new Layer(renderManager);
 
-    particleSystem = new ParticleSystem(renderManager);
+    glViewport(0, 0, screenWidth, screenHeight);
 
-    glPointSize(5.0f);*/
-	
-    /*glShadeModel(GL_SMOOTH);
-	glViewport(0, 0, screenWidth, screenHeight);
- 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, screenWidth, 0, screenHeight, -128, 128);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
-	// Set the color and depth clear values
-	glClearDepth(1.f);
-	glClearColor(0.f, 0.f, 0.f, 0.f);
+    // Set the color and depth clear values
+    glClearDepth(1.f);
+    glClearColor(0.f, 0.f, 0.f, 0.f);
 
-	// Enable Z-buffer read and write
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	
-	glDepthFunc(GL_LEQUAL);*/
+    // Enable Z-buffer read and write
+    glEnable(GL_DEPTH_TEST);
+    //glDepthMask(GL_TRUE); // enabled by default
+    glDepthFunc(GL_LEQUAL);
+
+    setupWorld();
+}
+
+void Core::setupWorld() {
+    int v1 = triangles->addVertex(500.0f, 200.0f, 0.0f, 1.0f, 255, 0, 255, 255);
+    int v2 = triangles->addVertex(500.0f, 400.0f, 0.0f, 0.0f, 0, 255, 255, 255);
+    int v3 = triangles->addVertex(700.0f, 400.0f, 1.0f, 0.0f, 0, 255, 255, 255);
+    int v4 = triangles->addVertex(700.0f, 200.0f, 1.0f, 1.0f, 0, 0, 255, 255);
+    triangles->addTriangle(v1, v2, v3, "Textures/Canyon.png");
+    triangles->addTriangle(v1, v3, v4, "Textures/Fault Zone.png");
+
+    //selection->selectVertex(v3);
+
+    /*
+    int a = renderManager->addLineVertex(0.0f, 0.0f, 255, 0, 0, 255);
+    int b = renderManager->addLineVertex(200.0f, 100.0f, 0, 255, 0, 255);
+    int l = renderManager->addLine(a, b);
+    renderManager->drawLine(l);
+
+    int tv1 = renderManager->addTriangleVertex(150, 150, 0, 1, 255, 255, 255, 255);
+    int tv2 = renderManager->addTriangleVertex(300, 150, 1, 1, 255, 255, 255, 255);
+    int tv3 = renderManager->addTriangleVertex(300, 300, 1, 0, 255, 255, 255, 255);
+    int t = renderManager->addTriangle(tv1, tv2, tv3, "Textures/Canyon.png");
+
+    renderManager->drawTriangle(t);
+
+    renderManager->removeLine(l);
+    renderManager->removeLineVertex(a);
+    renderManager->removeLineVertex(b);
+
+    renderManager->removeTriangle(t);
+    renderManager->removeTriangleVertex(tv1);
+    renderManager->removeTriangleVertex(tv2);
+    renderManager->removeTriangleVertex(tv3);
+    */
 }
 
 void Core::mainLoop() {
+
+    SDL_Event event;
+    bool done = false;
+
+    while (!done) {
+        while (SDL_PollEvent(&event)) {
+            if (actionHandler != nullptr) {
+                if (actionHandler->handleEvent(&event)) {
+                    delete actionHandler;
+                    actionHandler = nullptr;
+                }
+            }
+            else {
+                switch (event.type) {
+                    case SDL_MOUSEBUTTONDOWN:
+                        if (event.button.button == SDL_BUTTON_LEFT) {
+                            const Uint8* keyState = SDL_GetKeyboardState(NULL);
+                            if (keyState[SDL_SCANCODE_LCTRL]) {
+                                actionHandler = new TriangleCreationHandler(selection, triangles, &actionManager, renderManager, selectionLayer, screenHeight);
+                            }
+                        }
+                        else if (event.button.button == SDL_BUTTON_RIGHT) {
+                            vector<int> newVertices;
+                            int v = triangles->getClosestVertex(event.button.x, screenHeight - event.button.y);
+                            if (v != -1) {
+                                //std::cout<<"v = "<<v<<std::endl;
+                                newVertices.push_back(v);
+                                SelectVertices* selectVertices;
+                                const Uint8* keyState = SDL_GetKeyboardState(NULL);
+                                if (keyState[SDL_SCANCODE_LSHIFT])
+                                    selectVertices = new SelectVertices(selection, newVertices);
+                                else
+                                    selectVertices = new SelectVertices(selection, newVertices, true);
+                                actionManager.pushAction(selectVertices);
+                            }
+                        }
+                        break;
+                    case SDL_KEYDOWN:
+                        switch (event.key.keysym.sym) {
+                            case SDLK_a:
+                            {
+                                if (!selection->empty()) {
+                                    vector<int> selectedVertices = selection->getSelectedVertices();
+                                    SelectVertices* deselectAll = new SelectVertices(selection, selectedVertices);
+                                    actionManager.pushAction(deselectAll);
+                                }
+                                break;
+                            }
+                            case SDLK_z:
+                            {
+                                const Uint8* keyState = SDL_GetKeyboardState(NULL);
+                                if (keyState[SDL_SCANCODE_LCTRL]) {
+                                    if (keyState[SDL_SCANCODE_LSHIFT])
+                                        actionManager.redoAction();
+                                    else
+                                        actionManager.undoAction();
+                                }
+                                break;
+                            }
+                            case SDLK_x:
+                            {
+                                if (!selection->empty()) {
+                                    RemoveSelection* removeSelection = new RemoveSelection(selection, triangles);
+                                    actionManager.pushAction(removeSelection);
+                                }
+                                break;
+                            }
+                            case SDLK_g:
+                            {
+                                if (!selection->empty()) {
+                                    actionHandler = new MoveHandler(selection, triangles, &actionManager);
+                                }
+                                break;
+                            }
+                            case SDLK_s:
+                            {
+                                vector<int> selectedVertices = selection->getSelectedVertices();
+                                if (selectedVertices.size() > 1) {
+                                    actionHandler = new ScaleHandler(selection, triangles, &actionManager, screenHeight);
+                                }
+                                break;
+                            }
+                            case SDLK_r:
+                            {
+                                vector<int> selectedVertices = selection->getSelectedVertices();
+                                if (selectedVertices.size() > 1) {
+                                    actionHandler = new RotationHandler(selection, triangles, &actionManager, screenHeight);
+                                }
+                                break;
+                            }
+                            case SDLK_f:
+                            {
+                                vector<int> selectedVertices = selection->getSelectedVertices();
+                                if (selectedVertices.size() == 3) {
+                                    vector<int> adjacentTriangles = triangles->getAdjacentTriangles(selectedVertices[0]);
+                                    bool noTriangleYet = true;
+                                    for (unsigned int i = 0; i < adjacentTriangles.size(); i++) {
+                                        if (triangles->triangleContainsVertex(adjacentTriangles[i], selectedVertices[1]) && triangles->triangleContainsVertex(adjacentTriangles[i], selectedVertices[2]))
+                                            noTriangleYet = false;
+                                    }
+                                    if (noTriangleYet) {
+                                        FillTriangle* fillTriangle = new FillTriangle(selection, triangles, selectedVertices[0], selectedVertices[1], selectedVertices[2]);
+                                        actionManager.pushAction(fillTriangle);
+                                    }
+                                }
+                                break;
+                            }
+                            default:
+                                break;
+                        }
+                        break;
+                    case SDL_QUIT:
+                        done = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        frameRender();
+    }
+
     /*float sum = 0;
     float timeStep = 1.0f/60.0f;
     int stepsTotal;
@@ -366,10 +389,10 @@ void Core::mainLoop() {
             else if (event.type == sf::Event::MouseMoved)
                 lights[3].setPosition(event.mouseMove.x, screenHeight - event.mouseMove.y);
 
-            /*else if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
-                particleSystem->step();
-            }*/
-        /*}
+            //else if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
+                //particleSystem->step();
+            //}
+        //}
 
         if (particleFollowsMouse) {
             sf::Vector2i p = sf::Mouse::getPosition();
@@ -397,50 +420,31 @@ void Core::mainLoop() {
     }*/
 }
 
-/*void Core::frameRender() {
-	// Clear color and depth buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
+void Core::frameRender() {
+    // Clear color and depth buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-}*/
+    triangles->draw();
+    selection->draw();
+    selectionLayer->draw();
 
-/// Print out the information log for a shader object 
-/// @arg obj handle for a program object
-/*static void printProgramInfoLog(GLuint obj)
-{
-	GLint infologLength = 0, charsWritten = 0;
-	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
-	if (infologLength > 2) {
-		GLchar* infoLog = new GLchar [infologLength];
-		glGetProgramInfoLog(obj, infologLength, &charsWritten, infoLog);
-		std::cerr << infoLog << std::endl;
-		delete infoLog;
-	}
-}*/
+    // Swap our back buffer to the front
+    SDL_GL_SwapWindow(mainwindow);
+}
 
 void Core::close() {
+    delete renderManager;
+    delete resourceManager;
+    delete selection;
+    delete triangles;
+
     // Delete our opengl context, destroy our window, and shutdown SDL
     SDL_GL_DeleteContext(maincontext);
     SDL_DestroyWindow(mainwindow);
     SDL_Quit();
 
-    /*glDeleteTextures(1, &lightTex);
-	
-    delete selection;
-    delete triangles;
-    delete particleSystem;
-    delete renderManager;
-    delete resourceManager;
-
-	
-	deleteFramebuffers();
-	
-    delete triangleShader;
-    delete pointLineShader;
-
-    delete radialBlurShader;
-	*/
+    /*delete particleSystem;
+	deleteFramebuffers();*/
 }
 
 }

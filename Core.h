@@ -30,35 +30,35 @@
 #include <SDL2/SDL.h>
 //#include <SDL2/SDL_opengl.h>
 
-#define GL3_PROTOTYPES 1
-#include <GL3/gl3.h>
-
-//#include <GL/glew.h>
+/*#define GL3_PROTOTYPES 1
+#include <GL3/gl3.h>*/
+#include <GL/glew.h>
 
 #include <glm/glm.hpp>
+
+#include "RenderManager.h"
+#include "Layer.h"
+#include "Triangles.h"
+#include "Selection.h"
+
+#include "Actions/ActionManager.h"
+#include "Actions/SelectVertices.h"
+#include "Actions/RemoveSelection.h"
+#include "Actions/MoveSelection.h"
+#include "Actions/ScaleSelection.h"
+#include "Actions/RotateSelection.h"
+#include "Actions/CreateTriangle.h"
+#include "Actions/FillTriangle.h"
+
+#include "ActionHandler/ActionHandler.h"
+#include "ActionHandler/MoveHandler.h"
+#include "ActionHandler/ScaleHandler.h"
+#include "ActionHandler/RotationHandler.h"
+#include "ActionHandler/TriangleCreationHandler.h"
 
 #define PROGRAM_NAME "CerealKiller"
 
 namespace ck {
-
-/*
-
-class Shader {
-private:
-    GLuint  vertexShaderId,
-            fragmentShaderId,
-            programId;
-public:
-    Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
-    ~Shader();
-    char* fileTostring(const char *path);
-    void printLog(GLuint obj);
-    GLuint getProgramId();
-};
-
-inline GLuint Shader::getProgramId() {
-    return programId;
-}*/
 
 class Core {
 private:
@@ -70,23 +70,23 @@ private:
     void sdldie(const char *msg);
     void checkSDLError(int line = -1);
 
-    /*
-    Shader* triangleShader;
-    Shader* pointLineShader;
-
-    Shader* radialBlurShader;
+    //Shader* radialBlurShader;
 
     //b2DynamicTree tree;
 
-    //ResourceManager* resourceManager;
-    //RenderManager* renderManager;
+    ResourceManager* resourceManager;
+    RenderManager* renderManager;
+    ActionManager actionManager;
+
     Triangles* triangles;
 
     Selection* selection;
+    Layer* selectionLayer;
 
     ActionHandler* actionHandler;
 	
-    void frameRender();*/
+    void frameRender();
+    void setupWorld();
 public:
     Core(int screenWidth, int screenHeight);
 	

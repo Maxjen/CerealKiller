@@ -23,14 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_ROTATIONHANDLER_H
+#define CK_ROTATIONHANDLER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+#include "ActionHandler.h"
+#include "../Actions/ActionManager.h"
+#include "../Actions/RotateSelection.h"
 
-    return 0;
+namespace ck {
+
+class RotationHandler : public ActionHandler {
+private:
+    Selection* selection;
+    Triangles* triangles;
+    ActionManager* actionManager;
+    RotateSelection* rotateSelection;
+    int screenHeight;
+    Vec2 rotationCenter;
+    Vec2 mousePosition;
+    float angle;
+    float startAngle;
+    vector<int> selectedVertices;
+    vector<Vec2> startPositions;
+public:
+    RotationHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager, int screenHeight);
+    bool handleEvent(SDL_Event* event);
+};
+
 }
+
+#endif // CK_ROTATIONHANDLER_H

@@ -23,14 +23,33 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_REMOVESELECTION_H
+#define CK_REMOVESELECTION_H
 
-using namespace ck;
+#include <set>
+#include "Action.h"
+#include "../Selection.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+using std::set;
 
-    return 0;
+namespace ck {
+
+class RemoveSelection : public Action
+{
+private:
+    Selection* selection;
+    Triangles* triangles;
+
+    bool firstApply;
+    vector<int> selectedVertices;
+    set<int> trianglesToRemove;
+    set<int> verticesToRemove;
+public:
+    RemoveSelection(Selection* selection, Triangles* triangles);
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_REMOVESELECTION_H

@@ -23,14 +23,33 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#include "MoveSelection.h"
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+MoveSelection::MoveSelection(Selection *selection, Triangles* triangles) {
+    this->selection = selection;
+    this->triangles = triangles;
 
-    return 0;
+    verticesToMove = selection->getSelectedVertices();
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        startPositions.push_back(Vec2(triangles->getVertexPositionX(verticesToMove[i]), triangles->getVertexPositionY(verticesToMove[i])));
+}
+
+void MoveSelection::setDeltaPosition(Vec2 deltaPosition) {
+    this->deltaPosition = deltaPosition;
+}
+
+void MoveSelection::apply() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        triangles->setVertexPosition(verticesToMove[i], startPositions[i].x + deltaPosition.x, startPositions[i].y + deltaPosition.y);
+    selection->updateSelection();
+}
+
+void MoveSelection::revert() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        triangles->setVertexPosition(verticesToMove[i], startPositions[i].x, startPositions[i].y);
+    selection->updateSelection();
+}
+
 }

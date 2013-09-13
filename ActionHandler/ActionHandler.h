@@ -23,14 +23,19 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_ACTIONHANDLER_H
+#define CK_ACTIONHANDLER_H
 
-using namespace ck;
+#include <SDL2/SDL.h>
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class ActionHandler {
+public:
+    virtual ~ActionHandler();
+    virtual bool handleEvent(SDL_Event* event) = 0;
+};
+
 }
+
+#endif // CK_ACTIONHANDLER_H

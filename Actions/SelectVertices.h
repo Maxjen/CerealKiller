@@ -23,14 +23,25 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_SELECTVERTICES_H
+#define CK_SELECTVERTICES_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class SelectVertices : public Action {
+private:
+    Selection* selection;
+    vector<int> oldVertices;
+    vector<int> newVertices;
+public:
+    SelectVertices(Selection* selection, vector<int> newVertices, bool replaceCurrentSelection = false);
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_SELECTVERTICES_H

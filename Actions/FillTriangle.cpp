@@ -23,14 +23,44 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#include "FillTriangle.h"
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+FillTriangle::FillTriangle(Selection* selection, Triangles* triangles, int v1, int v2, int v3) {
+    this->triangles = triangles;
+    this->selection = selection;
+    this->v1 = v1;
+    this->v2 = v2;
+    this->v3 = v3;
 
-    return 0;
+    firstApply = true;
+}
+
+void FillTriangle::apply() {
+    selection->selectVertex(v1);
+    selection->selectVertex(v2);
+    selection->selectVertex(v3);
+    if (firstApply) {
+        t = triangles->addTriangle(v1, v2, v3, "Textures/Fault Zone.png");
+        firstApply = false;
+    }
+    else {
+        triangles->restoreTriangle(t);
+    }
+    selection->selectVertex(v1);
+    selection->selectVertex(v2);
+    selection->selectVertex(v3);
+}
+
+void FillTriangle::revert() {
+    selection->selectVertex(v1);
+    selection->selectVertex(v2);
+    selection->selectVertex(v3);
+    triangles->removeTriangle(t);
+    selection->selectVertex(v1);
+    selection->selectVertex(v2);
+    selection->selectVertex(v3);
+}
+
 }

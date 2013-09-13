@@ -23,14 +23,29 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_MOVEHANDLER_H
+#define CK_MOVEHANDLER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+#include "ActionHandler.h"
+#include "../Actions/ActionManager.h"
+#include "../Actions/MoveSelection.h"
 
-    return 0;
+namespace ck {
+
+class MoveHandler : public ActionHandler {
+private:
+    Selection* selection;
+    Triangles* triangles;
+    ActionManager* actionManager;
+    MoveSelection* moveSelection;
+    Vec2 deltaPosition;
+    vector<int> selectedVertices;
+public:
+    MoveHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager);
+    bool handleEvent(SDL_Event* event);
+};
+
 }
+
+#endif // CK_MOVEHANDLER_H

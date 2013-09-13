@@ -23,14 +23,22 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_ACTION_H
+#define CK_ACTION_H
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+class Action {
+public:
+    //virtual Action* clone() = 0;
 
-    return 0;
+    //virtual bool apply() = 0; //return true if undoable
+    virtual ~Action();
+
+    virtual void apply() = 0;
+    virtual void revert() = 0;
+};
+
 }
+
+#endif // CK_ACTION_H

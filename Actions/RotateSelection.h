@@ -23,14 +23,32 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_ROTATESELECTION_H
+#define CK_ROTATESELECTION_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
+#include "../Math/Vec2.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class RotateSelection : public Action {
+private:
+    Selection* selection;
+    Triangles* triangles;
+
+    Vec2 rotationCenter;
+    vector<int> verticesToRotate;
+    vector<Vec2> startPositions;
+    float angle;
+public:
+    RotateSelection(Selection* selection, Triangles* triangles);
+    void setRotationAngle(float angle);
+    Vec2 getRotationCenter();
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_ROTATESELECTION_H

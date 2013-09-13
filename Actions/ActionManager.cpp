@@ -23,14 +23,47 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#include "ActionManager.h"
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+ActionManager::ActionManager() {
+}
 
-    return 0;
+ActionManager::~ActionManager() {
+    while(!undoStack.empty()) {
+        delete undoStack.top();
+        undoStack.pop();
+    }
+    while(!redoStack.empty()) {
+        delete redoStack.top();
+        redoStack.pop();
+    }
+}
+
+void ActionManager::pushAction(Action* newAction) {
+    newAction->apply();
+    undoStack.push(newAction);
+    while(!redoStack.empty()) {
+        delete redoStack.top();
+        redoStack.pop();
+    }
+}
+
+void ActionManager::undoAction() {
+    if (!undoStack.empty()) {
+        undoStack.top()->revert();
+        redoStack.push(undoStack.top());
+        undoStack.pop();
+    }
+}
+
+void ActionManager::redoAction() {
+    if (!redoStack.empty()) {
+        redoStack.top()->apply();
+        undoStack.push(redoStack.top());
+        redoStack.pop();
+    }
+}
+
 }

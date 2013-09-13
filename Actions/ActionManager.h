@@ -23,14 +23,29 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_ACTIONMANAGER_H
+#define CK_ACTIONMANAGER_H
 
-using namespace ck;
+#include <stack>
+#include "Action.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+using std::stack;
 
-    return 0;
+namespace ck {
+
+class ActionManager
+{
+private:
+    stack<Action*> undoStack;
+    stack<Action*> redoStack;
+public:
+    ActionManager();
+    ~ActionManager();
+    void pushAction(Action* newAction);
+    void undoAction();
+    void redoAction();
+};
+
 }
+
+#endif // CK_ACTIONMANAGER_H

@@ -23,14 +23,41 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_TRIANGLE_SHADER_H
+#define CK_TRIANGLE_SHADER_H
 
-using namespace ck;
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Shader.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class TriangleShader : public Shader {
+private:
+    GLint positionLocation;
+    GLint texCoordLocation;
+    GLint colorLocation;
+    GLint projectionMatrixLocation;
+    GLint modelViewMatrixLocation;
+public:
+    TriangleShader();
+
+    void setProjectionMatrix(glm::mat4 projectionMatrix);
+    void setModelViewMatrix(glm::mat4 modelViewMatrix);
+
+    void setPositionPointer(GLsizei stride, const GLvoid* offset);
+    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
+    void setColorPointer(GLsizei stride, const GLvoid* offset);
+
+    void enablePositionPointer();
+    void enableTexCoordPointer();
+    void enableColorPointer();
+
+    void disablePositionPointer();
+    void disableTexCoordPointer();
+    void disableColorPointer();
+};
+
 }
+
+#endif // CK_TRIANGLE_SHADER_H

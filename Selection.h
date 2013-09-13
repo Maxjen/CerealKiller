@@ -23,14 +23,56 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_SELECTION_H
+#define CK_SELECTION_H
 
-using namespace ck;
+#include "RenderManager.h"
+#include "Triangles.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+struct SelectionEdge {
+    int v1, v2;
+
+    bool operator<(const SelectionEdge& e) const {
+        return (v1 < e.v1) || (v1 == e.v1 && v2 < e.v2);
+    }
+};
+
+struct SelectionEdgeData {
+    bool v1Selected, v2Selected;
+    int indexV1, indexV2, indexLine;
+    //int triangleCount;
+};
+
+class Selection {
+private:
+    RenderManager* renderManager;
+    Triangles* triangles;
+
+    //set<int> selectedVertices;
+
+    // maps index of vertex to index of point in renderManager
+    map<int, int> selectedVertices;
+
+    map<SelectionEdge, SelectionEdgeData> edges;
+
+    // maybe make public
+    void addVertex(int v);
+    void removeVertex(int v);
+public:
+    Selection(RenderManager* renderManager, Triangles* triangles);
+    ~Selection();
+
+    void selectVertex(int v);
+    vector<int> getSelectedVertices();
+
+    void updateSelection();
+    bool empty() const;
+
+    void draw();
+};
+
 }
+
+#endif // CK_SELECTION_H

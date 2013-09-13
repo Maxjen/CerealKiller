@@ -23,14 +23,37 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_LAYER_H
+#define CK_LAYER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+#include "RenderManager.h"
+#include <set>
 
-    return 0;
+using std::set;
+
+namespace ck {
+
+class Layer {
+private:
+    RenderManager* renderManager;
+    set<int> points;
+    set<int> lines;
+    set<int> triangles;
+public:
+    Layer(RenderManager* renderManager);
+    void addPoint(int p);
+    void removePoint(int p);
+    void addLine(int l);
+    void removeLine(int l);
+    void addTriangle(int t);
+    void removeTriangle(int t);
+
+    void clearLayer();
+
+	void draw();
+};
+
 }
+
+#endif // CK_LAYER_H

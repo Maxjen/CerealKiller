@@ -23,14 +23,33 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_CREATETRIANGLE_H
+#define CK_CREATETRIANGLE_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
+#include "../Math/Vec2.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class CreateTriangle : public Action
+{
+private:
+    Selection* selection;
+    Triangles* triangles;
+
+    bool firstApply;
+    int v1, v2, v3, t;
+    Vec2 v1Position, v2Position, v3Position;
+public:
+    CreateTriangle(Selection* selection, Triangles* triangles);
+    void setV1Position(float x, float y);
+    void setV2Position(float x, float y);
+    void setV3Position(float x, float y);
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_CREATETRIANGLE_H

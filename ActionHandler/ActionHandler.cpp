@@ -23,14 +23,12 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#include "ActionHandler.h"
 
-using namespace ck;
+namespace ck {
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+ActionHandler::~ActionHandler() {
+    // do nothing
+}
 
-    return 0;
 }

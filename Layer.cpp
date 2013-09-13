@@ -23,14 +23,54 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#include "Layer.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+Layer::Layer(RenderManager* renderManager) {
+    this->renderManager = renderManager;
+}
+
+void Layer::addPoint(int p) {
+    points.insert(p);
+}
+
+void Layer::removePoint(int p) {
+    points.erase(p);
+}
+
+void Layer::addLine(int l) {
+    lines.insert(l);
+}
+
+void Layer::removeLine(int l) {
+    lines.erase(l);
+}
+
+void Layer::addTriangle(int t) {
+    triangles.insert(t);
+}
+
+void Layer::removeTriangle(int t) {
+    triangles.erase(t);
+}
+
+void Layer::clearLayer() {
+    points.clear();
+    lines.clear();
+    triangles.clear();
+}
+
+void Layer::draw() {
+    set<int>::iterator i;
+
+    for (i = points.begin(); i != points.end(); ++i)
+        renderManager->drawPoint(*i);
+    for (i = lines.begin(); i != lines.end(); ++i)
+        renderManager->drawLine(*i);
+    for (i = triangles.begin(); i != triangles.end(); ++i)
+        renderManager->drawTriangle(*i);
+}
+
 }

@@ -23,14 +23,30 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_MOVESELECTION_H
+#define CK_MOVESELECTION_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
+#include "../Math/Vec2.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class MoveSelection : public Action {
+private:
+    Selection* selection;
+    Triangles* triangles;
+
+    vector<int> verticesToMove;
+    vector<Vec2> startPositions;
+    Vec2 deltaPosition;
+public:
+    MoveSelection(Selection* selection, Triangles* triangles);
+    void setDeltaPosition(Vec2 deltaPosition);
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_MOVESELECTION_H

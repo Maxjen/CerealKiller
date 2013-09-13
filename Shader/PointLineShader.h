@@ -23,14 +23,37 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_POINTLINE_SHADER_H
+#define CK_POINTLINE_SHADER_H
 
-using namespace ck;
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "Shader.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class PointLineShader : public Shader {
+private:
+    GLint positionLocation;
+    GLint colorLocation;
+    GLint projectionMatrixLocation;
+    GLint modelViewMatrixLocation;
+public:
+    PointLineShader();
+
+    void setProjectionMatrix(glm::mat4 projectionMatrix);
+    void setModelViewMatrix(glm::mat4 modelViewMatrix);
+
+    void setPositionPointer(GLsizei stride, const GLvoid* offset);
+    void setColorPointer(GLsizei stride, const GLvoid* offset);
+
+    void enablePositionPointer();
+    void enableColorPointer();
+
+    void disablePositionPointer();
+    void disableColorPointer();
+};
+
 }
+
+#endif // CK_POINTLINE_SHADER_H

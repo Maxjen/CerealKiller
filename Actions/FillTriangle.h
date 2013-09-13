@@ -23,14 +23,29 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_FILLTRIANGLE_H
+#define CK_FILLTRIANGLE_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class FillTriangle : public Action
+{
+private:
+    Triangles* triangles;
+    Selection* selection;
+
+    bool firstApply;
+    int v1, v2, v3;
+    int t;
+public:
+    FillTriangle(Selection* selection, Triangles* triangles, int v1, int v2, int v3);
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_FILLTRIANGLE_H

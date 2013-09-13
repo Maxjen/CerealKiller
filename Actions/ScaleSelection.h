@@ -23,14 +23,32 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
+#ifndef CK_SCALESELECTION_H
+#define CK_SCALESELECTION_H
 
-using namespace ck;
+#include "Action.h"
+#include "../Selection.h"
+#include "../Math/Vec2.h"
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+namespace ck {
 
-    return 0;
+class ScaleSelection : public Action {
+private:
+    Selection* selection;
+    Triangles* triangles;
+
+    Vec2 scaleCenter;
+    vector<int> verticesToScale;
+    vector<Vec2> startPositions;
+    float scaleFactor;
+public:
+    ScaleSelection(Selection* selection, Triangles* triangles);
+    void setScaleFactor(float scaleFactor);
+    Vec2 getScaleCenter();
+    void apply();
+    void revert();
+};
+
 }
+
+#endif // CK_SCALESELECTION_H

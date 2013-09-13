@@ -23,14 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "Core.h"
 
-using namespace ck;
+#ifndef CK_SCALEHANDLER_H
+#define CK_SCALEHANDLER_H
 
-int main() {
-    Core core(800, 600);
-    core.mainLoop();
-    core.close();
+#include "ActionHandler.h"
+#include "../Actions/ActionManager.h"
+#include "../Actions/ScaleSelection.h"
 
-    return 0;
+namespace ck {
+
+class ScaleHandler : public ActionHandler {
+private:
+    Selection* selection;
+    Triangles* triangles;
+    ActionManager* actionManager;
+    ScaleSelection* scaleSelection;
+    int screenHeight;
+    Vec2 scaleCenter;
+    Vec2 mousePosition;
+    float scaleFactor;
+    float startDist;
+    vector<int> selectedVertices;
+    vector<Vec2> startPositions;
+public:
+    ScaleHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager, int screenHeight);
+    bool handleEvent(SDL_Event* event);
+};
+
 }
+
+#endif // CK_SCALEHANDLER_H
