@@ -23,43 +23,48 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "CreateBone.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
-private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
-public:
-    TriangleShader();
+CreateBone::CreateBone(CharSelection* charSelection, Bones* bones) {
+    this->charSelection = charSelection;
+    this->bones = bones;
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
-};
-
+    firstApply = true;
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+void CreateBone::setV1Position(float x, float y) {
+    v1Position = Vec2(x, y);
+}
+
+void CreateBone::setV2Position(float x, float y) {
+    v2Position = Vec2(x, y);
+}
+
+void CreateBone::apply() {
+    if (firstApply) {
+        v1 = bones->addBoneVertex(v1Position.x, v1Position.y);
+        v2 = bones->addBoneVertex(v2Position.x, v2Position.y);
+        b = bones->addBone(v1, v2);
+        firstApply = false;
+    }
+    else {
+        bones->restoreBoneVertex(v1);
+        bones->restoreBoneVertex(v2);
+        bones->restoreBone(b);
+    }
+    charSelection->selectBoneVertex(v1);
+    charSelection->selectBoneVertex(v2);
+}
+
+void CreateBone::revert() {
+    charSelection->selectBoneVertex(v1);
+    charSelection->selectBoneVertex(v2);
+
+    bones->removeBone(b);
+    bones->removeBoneVertex(v1);
+    bones->removeBoneVertex(v2);
+}
+
+}

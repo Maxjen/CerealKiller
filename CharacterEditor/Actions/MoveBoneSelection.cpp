@@ -23,43 +23,31 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "MoveBoneSelection.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
-private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
-public:
-    TriangleShader();
+MoveBoneSelection::MoveBoneSelection(CharSelection* charSelection, Bones* bones) {
+    this->charSelection = charSelection;
+    this->bones = bones;
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
-};
-
+    verticesToMove = charSelection->getSelectedBoneVertices();
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        startPositions.push_back(Vec2(bones->getBoneVertexPositionX(verticesToMove[i]), bones->getBoneVertexPositionY(verticesToMove[i])));
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+void MoveBoneSelection::setDeltaPosition(Vec2 deltaPosition) {
+    this->deltaPosition = deltaPosition;
+}
+
+void MoveBoneSelection::apply() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        bones->setBoneVertexPosition(verticesToMove[i], startPositions[i].x + deltaPosition.x, startPositions[i].y + deltaPosition.y);
+}
+
+void MoveBoneSelection::revert() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        bones->setBoneVertexPosition(verticesToMove[i], startPositions[i].x, startPositions[i].y);
+}
+
+}

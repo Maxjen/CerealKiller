@@ -1,0 +1,11 @@
+Maps (.mxm)
+Main chunk 0x6060
+	Texture list 0xA0A0
+	Vertex list 0xA1A1
+	Triangle list 0xA2A2
+	
+Objects (.mxo)
+Main chunk 0x6161
+
+Characters (.mxc)
+Main chunk 0x6262

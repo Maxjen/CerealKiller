@@ -23,43 +23,32 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
+#ifndef CK_ROTATESELECTION_H
+#define CK_ROTATESELECTION_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "../../Action.h"
+#include "../../Selection.h"
+#include "../../Math/Vec2.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class RotateSelection : public Action {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    Selection* selection;
+    Triangles* triangles;
+
+    Vec2 rotationCenter;
+    vector<int> verticesToRotate;
+    vector<Vec2> startPositions;
+    float angle;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    RotateSelection(Selection* selection, Triangles* triangles);
+    void setRotationAngle(float angle);
+    Vec2 getRotationCenter();
+    void apply();
+    void revert();
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_ROTATESELECTION_H

@@ -23,43 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_SCALEBONEHANDLER_H
+#define CK_SCALEBONEHANDLER_H
+
+#include "../../ActionHandler.h"
+#include "../../ActionManager.h"
+#include "../Actions/ScaleBoneSelection.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class ScaleBoneHandler : public ActionHandler {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    CharSelection* charSelection;
+    Bones* bones;
+    ActionManager* actionManager;
+    ScaleBoneSelection* scaleBoneSelection;
+    int screenHeight;
+    Vec2 scaleCenter;
+    Vec2 mousePosition;
+    float scaleFactor;
+    float startDist;
+    vector<int> selectedVertices;
+    vector<Vec2> startPositions;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    ScaleBoneHandler(CharSelection* charSelection, Bones* bones, ActionManager* actionManager, int screenHeight);
+    bool handleEvent(SDL_Event* event);
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_SCALEBONEHANDLER_H

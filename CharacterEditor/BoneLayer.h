@@ -23,43 +23,49 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_BONELAYER_H
+#define CK_BONELAYER_H
+
+#include "../RenderManager.h"
+#include "../Bones.h"
+#include <set>
+
+using std::set;
 
 namespace ck {
 
-class TriangleShader : public Shader {
+struct BoneOverlay {
+    float x, y;
+    float angle, length;
+};
+
+class BoneLayer {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    RenderManager* renderManager;
+    Bones* bones;
+    set<int> points;
+    set<int> lines;
+    set<int> triangles;
+    vector<BoneOverlay> boneOverlays;
 public:
-    TriangleShader();
+    BoneLayer(RenderManager* renderManager, Bones* bones);
+    void addPoint(int p);
+    void removePoint(int p);
+    void addLine(int l);
+    void removeLine(int l);
+    void addTriangle(int t);
+    void removeTriangle(int t);
+    int addBoneOverlay(float x, float y, float angle, float length);
+    void setBoneOverlayPosition(int b, float x, float y);
+    void setBoneOverlayAngleLength(int b, float angle, float length);
+    void clearBoneOverlays();
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
+    void clearLayer();
 
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+	void draw();
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_BONELAYER_H

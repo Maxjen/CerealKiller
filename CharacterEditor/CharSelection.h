@@ -23,43 +23,42 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
+#ifndef CK_CHARSELECTION_H
+#define CK_CHARSELECTION_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "../RenderManager.h"
+#include "../Bones.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class CharSelection {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    RenderManager* renderManager;
+    Bones* bones;
+
+    set<int> selectedBoneVertices;
+
+    // maps index of vertex to index of point in renderManager
+    //map<int, int> selectedVertices;
+
+    // maybe make public
+    /*void addBoneVertex(int v);
+    void removeBoneVertex(int v);*/
 public:
-    TriangleShader();
+    CharSelection(RenderManager* renderManager, Bones* bones);
+    ~CharSelection();
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
+    void clear();
 
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
+    void selectBoneVertex(int v);
+    vector<int> getSelectedBoneVertices();
 
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
+    //void updateSelection();
+    bool empty() const;
 
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    //void draw();
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_CHARSELECTION_H

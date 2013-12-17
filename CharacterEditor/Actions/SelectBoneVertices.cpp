@@ -23,43 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "SelectBoneVertices.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
-private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
-public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
-};
-
+SelectBoneVertices::SelectBoneVertices(CharSelection* selection, vector<int> newVertices, bool replaceCurrentSelection) {
+    this->selection = selection;
+    if(replaceCurrentSelection)
+        this->oldVertices = selection->getSelectedBoneVertices();
+    this->newVertices = newVertices;
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+void SelectBoneVertices::apply() {
+    if (!oldVertices.empty()) {
+        for (unsigned int i = 0; i < oldVertices.size(); i++)
+            selection->selectBoneVertex(oldVertices[i]);
+    }
+    for (unsigned int i = 0; i < newVertices.size(); i++) {
+        selection->selectBoneVertex(newVertices[i]);
+    }
+}
+
+void SelectBoneVertices::revert() {
+    for (unsigned int i = 0; i < newVertices.size(); i++)
+        selection->selectBoneVertex(newVertices[i]);
+    if (!oldVertices.empty()) {
+        for (unsigned int i = 0; i < oldVertices.size(); i++)
+            selection->selectBoneVertex(oldVertices[i]);
+    }
+}
+
+}

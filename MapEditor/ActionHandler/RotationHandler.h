@@ -23,43 +23,34 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_ROTATIONHANDLER_H
+#define CK_ROTATIONHANDLER_H
+
+#include "../../ActionHandler.h"
+#include "../../ActionManager.h"
+#include "../Actions/RotateSelection.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class RotationHandler : public ActionHandler {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    Selection* selection;
+    Triangles* triangles;
+    ActionManager* actionManager;
+    RotateSelection* rotateSelection;
+    int screenHeight;
+    Vec2 rotationCenter;
+    Vec2 mousePosition;
+    float angle;
+    float startAngle;
+    vector<int> selectedVertices;
+    vector<Vec2> startPositions;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    RotationHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager, int screenHeight);
+    bool handleEvent(SDL_Event* event);
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_ROTATIONHANDLER_H

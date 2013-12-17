@@ -135,7 +135,7 @@ GLuint Shader::loadShader(const char* filename, GLenum shaderType) {
 }
 
 string Shader::fileToString(const char* filename) {
-  FILE *fp = fopen(filename, "rb");
+  FILE* fp = fopen(filename, "rb");
   if (fp) {
     string contents;
     fseek(fp, 0, SEEK_END);

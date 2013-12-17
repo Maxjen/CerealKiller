@@ -23,43 +23,33 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "MoveSelection.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
-private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
-public:
-    TriangleShader();
+MoveSelection::MoveSelection(Selection* selection, Triangles* triangles) {
+    this->selection = selection;
+    this->triangles = triangles;
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
-};
-
+    verticesToMove = selection->getSelectedVertices();
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        startPositions.push_back(Vec2(triangles->getVertexPositionX(verticesToMove[i]), triangles->getVertexPositionY(verticesToMove[i])));
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+void MoveSelection::setDeltaPosition(Vec2 deltaPosition) {
+    this->deltaPosition = deltaPosition;
+}
+
+void MoveSelection::apply() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        triangles->setVertexPosition(verticesToMove[i], startPositions[i].x + deltaPosition.x, startPositions[i].y + deltaPosition.y);
+    selection->updateSelection();
+}
+
+void MoveSelection::revert() {
+    for (unsigned int i = 0; i < verticesToMove.size(); i++)
+        triangles->setVertexPosition(verticesToMove[i], startPositions[i].x, startPositions[i].y);
+    selection->updateSelection();
+}
+
+}

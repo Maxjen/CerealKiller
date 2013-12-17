@@ -23,43 +23,36 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_TRIANGLECREATIONHANDLER_H
+#define CK_TRIANGLECREATIONHANDLER_H
+
+#include "../../ActionHandler.h"
+#include "../../Layer.h"
+#include "../../ActionManager.h"
+#include "../Actions/CreateTriangle.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class TriangleCreationHandler : public ActionHandler {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    Selection* selection;
+    CreateTriangle* createTriangle;
+    ActionManager* actionManager;
+    RenderManager* renderManager;
+    Layer* selectionLayer;
+    int screenHeight;
+    Vec2 mousePosition;
+    int verticesCreated;
+    Vec2 v1Position, v2Position, v3Position;
+    int v1, v2, v3;
+    int lv1, lv2, lv3;
+    int l1, l2, l3;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    TriangleCreationHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager, RenderManager* renderManager, Layer* selectionLayer, int screenHeight);
+    bool handleEvent(SDL_Event* event);
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_TRIANGLECREATIONHANDLER_H

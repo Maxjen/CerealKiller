@@ -36,10 +36,13 @@ RenderManager::RenderManager(ResourceManager* resourceManager) {
     pointLineShader.bind();
     pointLineShader.setProjectionMatrix(projectionMatrix);
     pointLineShader.setModelViewMatrix(modelViewMatrix);
+    pointLineShader.unbind();
 
     triangleShader.bind();
     triangleShader.setProjectionMatrix(projectionMatrix);
     triangleShader.setModelViewMatrix(modelViewMatrix);
+    //triangleShader.setUseTexture(1);
+    triangleShader.unbind();
 
     /*for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++)
@@ -125,7 +128,7 @@ RenderManager::~RenderManager() {
     free(freeTriangleList);
 
     for (int i = 0; i < triangleCapacity; i++) {
-        if (triangleTextures[i] == 0)
+        if (triangleTextures[i] != 0)
             delete(triangleTextures[i]);
     }
     free(triangleTextures);
@@ -137,6 +140,18 @@ RenderManager::~RenderManager() {
 
     glDeleteBuffers(1, &triangleVertexBuffer);
     glDeleteBuffers(1, &triangleIndexBuffer);
+}
+
+void RenderManager::setModelViewMatrix(glm::mat4 modelViewMatrix) {
+    this->modelViewMatrix = modelViewMatrix;
+
+    pointLineShader.bind();
+    pointLineShader.setModelViewMatrix(modelViewMatrix);
+    pointLineShader.unbind();
+
+    triangleShader.bind();
+    triangleShader.setModelViewMatrix(modelViewMatrix);
+    triangleShader.unbind();
 }
 
 int RenderManager::addPoint(float x, float y, char r, char g, char b, char a) {
@@ -413,6 +428,18 @@ void RenderManager::setTriangleVertexColor(int v, char r, char g, char b, char a
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+/*void RenderManager::enableTextures() {
+    triangleShader.bind();
+    triangleShader.setUseTexture(1);
+    triangleShader.unbind();
+}
+
+void RenderManager::disableTextures() {
+    triangleShader.bind();
+    triangleShader.setUseTexture(0);
+    triangleShader.unbind();
+}*/
+
 void RenderManager::drawTriangle(int t) {
     triangleShader.bind();
 
@@ -447,6 +474,7 @@ void RenderManager::drawTriangle(int t) {
 
 void RenderManager::removeTriangle(int t) {
     delete(triangleTextures[t]);
+    triangleTextures[t] = 0;
     freeTriangleList[t] = freeTriangle;
     freeTriangle = t;
 }

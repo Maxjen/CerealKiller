@@ -32,6 +32,7 @@
 #include <GL3/gl3.h>*/
 //#include <GL/glew.h>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -94,6 +95,8 @@ public:
     RenderManager(ResourceManager* resourceManager);
     ~RenderManager();
 
+    void setModelViewMatrix(glm::mat4 modelViewMatrix);
+
     int addPoint(float x, float y, char r, char g, char b, char a);
     void setPointPosition(int p, float x, float y);
     void drawPoint(int p);
@@ -111,6 +114,8 @@ public:
     int addTriangle(int v1, int v2, int v3, const char* textureName);
     void setTriangleVertexPosition(int v, float x, float y);
     void setTriangleVertexColor(int v, char r, char g, char b, char a);
+    //void enableTextures();
+    //void disableTextures();
     void drawTriangle(int t);
     void removeTriangle(int t);
     void removeTriangleVertex(int v);

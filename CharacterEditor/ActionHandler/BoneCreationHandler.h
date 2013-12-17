@@ -23,43 +23,33 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_BONECREATIONHANDLER_H
+#define CK_BONECREATIONHANDLER_H
+
+#include "../../ActionHandler.h"
+#include "../BoneLayer.h"
+#include "../../ActionManager.h"
+#include "../Actions/CreateBone.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class BoneCreationHandler : public ActionHandler {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    CharSelection* charSelection;
+    CreateBone* createBone;
+    ActionManager* actionManager;
+    RenderManager* renderManager;
+    BoneLayer* boneLayer;
+    int screenHeight;
+    Vec2 mousePosition;
+    Vec2 v1Position, v2Position;
+    int boneOverlayIndex;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    BoneCreationHandler(CharSelection* charSelection, Bones* bones, ActionManager* actionManager, RenderManager* renderManager, BoneLayer* boneLayer, int screenHeight);
+    bool handleEvent(SDL_Event* event);
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_BONECREATIONHANDLER_H

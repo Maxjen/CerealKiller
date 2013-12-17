@@ -23,43 +23,42 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_CONTEXT_H
+#define CK_CONTEXT_H
+
+#include <SDL2/SDL.h>
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class Context {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    /*int screenWidth, screenHeight;
+
+    //b2DynamicTree tree;
+
+    ResourceManager* resourceManager;
+    RenderManager* renderManager;
+    ActionManager actionManager;
+
+    Selection* selection;
+    Layer* selectionLayer;
+
+    ActionHandler* actionHandler;
+	
+    void setupWorld();*/
 public:
-    TriangleShader();
+    virtual ~Context() {}
 
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    virtual void handleEvent(SDL_Event* event) = 0;
+    virtual void frameRender() = 0;
+    /*Context(int screenWidth, int screenHeight);
+	
+    void mainLoop();
+	
+    void close();*/
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_CONTEXT_H

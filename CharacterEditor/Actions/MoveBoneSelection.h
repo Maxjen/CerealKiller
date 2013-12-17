@@ -23,43 +23,30 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
+#ifndef CK_MOVEBONESELECTION_H
+#define CK_MOVEBONESELECTION_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#include "../../Action.h"
+#include "../CharSelection.h"
+#include "../../Math/Vec2.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class MoveBoneSelection : public Action {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    CharSelection* charSelection;
+    Bones* bones;
+
+    vector<int> verticesToMove;
+    vector<Vec2> startPositions;
+    Vec2 deltaPosition;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    MoveBoneSelection(CharSelection* charSelection, Bones* bones);
+    void setDeltaPosition(Vec2 deltaPosition);
+    void apply();
+    void revert();
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_MOVEBONESELECTION_H

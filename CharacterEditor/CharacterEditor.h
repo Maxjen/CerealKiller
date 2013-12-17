@@ -24,56 +24,68 @@
 */
 
 
-#ifndef CK_CORE_H
-#define CK_CORE_H
+#ifndef CK_CHARACTEREDITOR_H
+#define CK_CHARACTEREDITOR_H
 
 #include <SDL2/SDL.h>
-//#include <SDL2/SDL_opengl.h>
-
-/*#define GL3_PROTOTYPES 1
-#include <GL3/gl3.h>*/
-#include <GL/glew.h>
 
 #include <glm/glm.hpp>
 
-#include "RenderManager.h"
+#include "../RenderManager.h"
+#include "../Layer.h"
+#include "../Triangles.h"
+#include "../Selection.h"
+#include "BoneLayer.h"
+#include "../Bones.h"
+#include "CharSelection.h"
 
-#include "MapEditor/MapEditor.h"
-#include "CharacterEditor/CharacterEditor.h"
+#include "../Context.h"
 
-#define PROGRAM_NAME "CerealKiller"
+#include "../ActionManager.h"
+#include "Actions/SelectBoneVertices.h"
+#include "Actions/RemoveBoneSelection.h"
+/*#include "Actions/MoveBoneSelection.h"
+#include "Actions/ScaleBoneSelection.h"
+#include "Actions/RotateBoneSelection.h"
+#include "Actions/CreateBone.h"*/
+
+#include "../ActionHandler.h"
+#include "ActionHandler/MoveBoneHandler.h"
+#include "ActionHandler/ScaleBoneHandler.h"
+#include "ActionHandler/RotationBoneHandler.h"
+#include "ActionHandler/BoneCreationHandler.h"
 
 namespace ck {
 
-class Core {
+class CharacterEditor : public Context {
 private:
-    SDL_Window *mainwindow; // Our window handle
-    SDL_GLContext maincontext; // Our opengl context handle
-
     int screenWidth, screenHeight;
-
-    void sdldie(const char *msg);
-    void checkSDLError(int line = -1);
 
     //b2DynamicTree tree;
 
     ResourceManager* resourceManager;
     RenderManager* renderManager;
+    ActionManager actionManager;
 
-    Context* currentContext;
+    glm::mat4 modelViewMatrix;
 
-    MapEditor* mapEditor;
-    CharacterEditor* characterEditor;
-	
-    void frameRender();
+    Bones* bones;
+    BoneLayer* boneLayer;
+
+    Triangles* triangles;
+
+    CharSelection* charSelection;
+    Selection* selection;
+    Layer* selectionLayer;
+
+    ActionHandler* actionHandler;
 public:
-    Core(int screenWidth, int screenHeight);
-	
-    void mainLoop();
-	
-	void close();
+    CharacterEditor(ResourceManager* resourceManager, RenderManager* renderManager, int screenWidth, int screenHeight);
+    ~CharacterEditor();
+    void handleEvent(SDL_Event* event);
+    void frameRender();
 };
 
 }
 
-#endif // CK_CORE_H
+#endif // CK_CHARACTEREDITOR_H

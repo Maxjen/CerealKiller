@@ -23,58 +23,40 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_SELECTION_H
-#define CK_SELECTION_H
 
-#include "RenderManager.h"
-#include "Triangles.h"
+#include "MoveBoneHandler.h"
 
 namespace ck {
 
-struct SelectionEdge {
-    int v1, v2;
-
-    bool operator<(const SelectionEdge& e) const {
-        return (v1 < e.v1) || (v1 == e.v1 && v2 < e.v2);
-    }
-};
-
-struct SelectionEdgeData {
-    bool v1Selected, v2Selected;
-    int indexV1, indexV2, indexLine;
-    //int triangleCount;
-};
-
-class Selection {
-private:
-    RenderManager* renderManager;
-    Triangles* triangles;
-
-    //set<int> selectedVertices;
-
-    // maps index of vertex to index of point in renderManager
-    map<int, int> selectedVertices;
-
-    map<SelectionEdge, SelectionEdgeData> edges;
-
-    // maybe make public
-    void addVertex(int v);
-    void removeVertex(int v);
-public:
-    Selection(RenderManager* renderManager, Triangles* triangles);
-    ~Selection();
-
-    void clear();
-
-    void selectVertex(int v);
-    vector<int> getSelectedVertices();
-
-    void updateSelection();
-    bool empty() const;
-
-    void draw();
-};
-
+MoveBoneHandler::MoveBoneHandler(CharSelection* charSelection, Bones* bones, ActionManager* actionManager) {
+    this->charSelection = charSelection;
+    this->bones = bones;
+    this->actionManager = actionManager;
+    this->moveBoneSelection = new MoveBoneSelection(charSelection, bones);
+    deltaPosition = Vec2(0, 0);
+    selectedVertices = charSelection->getSelectedBoneVertices();
 }
 
-#endif // CK_SELECTION_H
+bool MoveBoneHandler::handleEvent(SDL_Event* event) {
+    switch (event->type) {
+        case SDL_MOUSEMOTION:
+            deltaPosition.x += event->motion.xrel;
+            deltaPosition.y -= event->motion.yrel;
+            for (unsigned int i = 0; i < selectedVertices.size(); i++)
+                bones->moveBoneVertex(selectedVertices[i], event->motion.xrel, -event->motion.yrel);
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (event->button.button == SDL_BUTTON_LEFT) {
+                moveBoneSelection->setDeltaPosition(deltaPosition);
+                actionManager->pushAction(moveBoneSelection);
+                return true;
+            }
+            break;
+        default:
+            break;
+    }
+
+    return false;
+}
+
+}

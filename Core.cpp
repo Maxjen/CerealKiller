@@ -50,9 +50,6 @@ Core::Core(int screenWidth, int screenHeight) {
     this->screenWidth = screenWidth;
     this->screenHeight = screenHeight;
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialize SDL's Video subsystem
-        sdldie("Unable to initialize SDL"); // Or die on error
-
     // Request opengl 3.2 context.
     // SDL doesn't have the ability to choose which profile at this time of writing,
     // but it should default to the core profile
@@ -63,6 +60,9 @@ Core::Core(int screenWidth, int screenHeight) {
     // You may need to change this to 16 or 32 for your system
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) // Initialize SDL's Video subsystem
+        sdldie("Unable to initialize SDL"); // Or die on error
 
     // Create our window centered at 512x512 resolution
     mainwindow = SDL_CreateWindow(PROGRAM_NAME, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -87,17 +87,15 @@ Core::Core(int screenWidth, int screenHeight) {
         close();
     }
 
-    actionHandler = nullptr;
-
     resourceManager = new ResourceManager();
     renderManager = new RenderManager(resourceManager);
 
-    triangles = new Triangles(renderManager);
+    mapEditor = new MapEditor(resourceManager, renderManager, screenWidth, screenHeight);
+    characterEditor = new CharacterEditor(resourceManager, renderManager, screenWidth, screenHeight);
 
-    selection = new Selection(renderManager, triangles);
+    currentContext = mapEditor;
+
     glPointSize(3.0f);
-
-    selectionLayer = new Layer(renderManager);
 
     glViewport(0, 0, screenWidth, screenHeight);
 
@@ -109,42 +107,6 @@ Core::Core(int screenWidth, int screenHeight) {
     glEnable(GL_DEPTH_TEST);
     //glDepthMask(GL_TRUE); // enabled by default
     glDepthFunc(GL_LEQUAL);
-
-    setupWorld();
-}
-
-void Core::setupWorld() {
-    int v1 = triangles->addVertex(500.0f, 200.0f, 0.0f, 1.0f, 255, 0, 255, 255);
-    int v2 = triangles->addVertex(500.0f, 400.0f, 0.0f, 0.0f, 0, 255, 255, 255);
-    int v3 = triangles->addVertex(700.0f, 400.0f, 1.0f, 0.0f, 0, 255, 255, 255);
-    int v4 = triangles->addVertex(700.0f, 200.0f, 1.0f, 1.0f, 0, 0, 255, 255);
-    triangles->addTriangle(v1, v2, v3, "Textures/Canyon.png");
-    triangles->addTriangle(v1, v3, v4, "Textures/Fault Zone.png");
-
-    //selection->selectVertex(v3);
-
-    /*
-    int a = renderManager->addLineVertex(0.0f, 0.0f, 255, 0, 0, 255);
-    int b = renderManager->addLineVertex(200.0f, 100.0f, 0, 255, 0, 255);
-    int l = renderManager->addLine(a, b);
-    renderManager->drawLine(l);
-
-    int tv1 = renderManager->addTriangleVertex(150, 150, 0, 1, 255, 255, 255, 255);
-    int tv2 = renderManager->addTriangleVertex(300, 150, 1, 1, 255, 255, 255, 255);
-    int tv3 = renderManager->addTriangleVertex(300, 300, 1, 0, 255, 255, 255, 255);
-    int t = renderManager->addTriangle(tv1, tv2, tv3, "Textures/Canyon.png");
-
-    renderManager->drawTriangle(t);
-
-    renderManager->removeLine(l);
-    renderManager->removeLineVertex(a);
-    renderManager->removeLineVertex(b);
-
-    renderManager->removeTriangle(t);
-    renderManager->removeTriangleVertex(tv1);
-    renderManager->removeTriangleVertex(tv2);
-    renderManager->removeTriangleVertex(tv3);
-    */
 }
 
 void Core::mainLoop() {
@@ -154,7 +116,28 @@ void Core::mainLoop() {
 
     while (!done) {
         while (SDL_PollEvent(&event)) {
-            if (actionHandler != nullptr) {
+            switch (event.type) {
+                case SDL_KEYDOWN:
+                    switch (event.key.keysym.sym) {
+                        case SDLK_1:
+                            currentContext = mapEditor;
+                            break;
+                        case SDLK_2:
+                            currentContext = characterEditor;
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case SDL_QUIT:
+                    done = true;
+                    break;
+                default:
+                    break;
+            }
+            currentContext->handleEvent(&event);
+
+            /*if (actionHandler != nullptr) {
                 if (actionHandler->handleEvent(&event)) {
                     delete actionHandler;
                     actionHandler = nullptr;
@@ -265,9 +248,18 @@ void Core::mainLoop() {
                     default:
                         break;
                 }
-            }
+            }*/
+
         }
-        frameRender();
+
+        currentContext->frameRender();
+
+        //frameRender();
+
+        // Swap our back buffer to the front
+        SDL_GL_SwapWindow(mainwindow);
+
+        SDL_Delay(10); // change this later
     }
 
     /*float sum = 0;
@@ -420,23 +412,21 @@ void Core::mainLoop() {
     }*/
 }
 
-void Core::frameRender() {
+/*void Core::frameRender() {
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     triangles->draw();
     selection->draw();
     selectionLayer->draw();
-
-    // Swap our back buffer to the front
-    SDL_GL_SwapWindow(mainwindow);
-}
+}*/
 
 void Core::close() {
+    delete mapEditor;
+    delete characterEditor;
+
     delete renderManager;
     delete resourceManager;
-    delete selection;
-    delete triangles;
 
     // Delete our opengl context, destroy our window, and shutdown SDL
     SDL_GL_DeleteContext(maincontext);

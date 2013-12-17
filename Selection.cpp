@@ -33,16 +33,36 @@ Selection::Selection(RenderManager* renderManager, Triangles* triangles) {
 }
 
 Selection::~Selection() {
+    /*map<SelectionEdge, SelectionEdgeData>::iterator iL;
+    for (iL = edges.begin(); iL != edges.end(); ++iL) {
+        renderManager->removeLine(iL->second.indexLine);
+        renderManager->removeLineVertex(iL->second.indexV1);
+        renderManager->removeLineVertex(iL->second.indexV2);
+    }
+
     map<int, int>::iterator iP;
     for (iP = selectedVertices.begin(); iP != selectedVertices.end(); ++iP)
         renderManager->removePoint(iP->second);
 
+    edges.clear();
+    selectedVertices.clear();*/
+    clear();
+}
+
+void Selection::clear() {
     map<SelectionEdge, SelectionEdgeData>::iterator iL;
     for (iL = edges.begin(); iL != edges.end(); ++iL) {
         renderManager->removeLine(iL->second.indexLine);
         renderManager->removeLineVertex(iL->second.indexV1);
         renderManager->removeLineVertex(iL->second.indexV2);
     }
+
+    map<int, int>::iterator iP;
+    for (iP = selectedVertices.begin(); iP != selectedVertices.end(); ++iP)
+        renderManager->removePoint(iP->second);
+
+    edges.clear();
+    selectedVertices.clear();
 }
 
 void Selection::selectVertex(int v) {

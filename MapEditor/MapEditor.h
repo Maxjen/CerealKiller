@@ -24,56 +24,66 @@
 */
 
 
-#ifndef CK_CORE_H
-#define CK_CORE_H
+#ifndef CK_MAPEDITOR_H
+#define CK_MAPEDITOR_H
 
 #include <SDL2/SDL.h>
-//#include <SDL2/SDL_opengl.h>
-
-/*#define GL3_PROTOTYPES 1
-#include <GL3/gl3.h>*/
-#include <GL/glew.h>
 
 #include <glm/glm.hpp>
 
-#include "RenderManager.h"
+#include "../RenderManager.h"
+#include "../Layer.h"
+#include "../Triangles.h"
+#include "../Selection.h"
 
-#include "MapEditor/MapEditor.h"
-#include "CharacterEditor/CharacterEditor.h"
+#include "../Context.h"
 
-#define PROGRAM_NAME "CerealKiller"
+#include "../ActionManager.h"
+#include "Actions/SelectVertices.h"
+#include "Actions/RemoveSelection.h"
+/*#include "Actions/MoveSelection.h"
+#include "Actions/ScaleSelection.h"
+#include "Actions/RotateSelection.h"
+#include "Actions/CreateTriangle.h"*/
+#include "Actions/FillTriangle.h"
+
+#include "../ActionHandler.h"
+#include "ActionHandler/MoveHandler.h"
+#include "ActionHandler/ScaleHandler.h"
+#include "ActionHandler/RotationHandler.h"
+#include "ActionHandler/TriangleCreationHandler.h"
 
 namespace ck {
 
-class Core {
+class MapEditor : public Context {
 private:
-    SDL_Window *mainwindow; // Our window handle
-    SDL_GLContext maincontext; // Our opengl context handle
-
     int screenWidth, screenHeight;
-
-    void sdldie(const char *msg);
-    void checkSDLError(int line = -1);
 
     //b2DynamicTree tree;
 
     ResourceManager* resourceManager;
     RenderManager* renderManager;
+    ActionManager actionManager;
 
-    Context* currentContext;
+    glm::mat4 modelViewMatrix;
 
-    MapEditor* mapEditor;
-    CharacterEditor* characterEditor;
-	
-    void frameRender();
+    Triangles* triangles;
+
+    Selection* selection;
+    Layer* selectionLayer;
+
+    ActionHandler* actionHandler;
 public:
-    Core(int screenWidth, int screenHeight);
-	
-    void mainLoop();
-	
-	void close();
+    MapEditor(ResourceManager* resourceManager, RenderManager* renderManager, int screenWidth, int screenHeight);
+    ~MapEditor();
+    void handleEvent(SDL_Event* event);
+    void frameRender();
+
+    int saveMap(const char* filename);
+    // returns 1 if successful, 0 otherwise
+    int loadMap(const char* filename);
 };
 
 }
 
-#endif // CK_CORE_H
+#endif // CK_MAPEDITOR_H

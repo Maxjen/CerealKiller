@@ -43,7 +43,8 @@ struct Vertex {
 
 struct Triangle {
     int v1, v2, v3;
-    string* textureName;
+    //string* textureName;
+    int textureId;
     int isUsed;
     int index;
 };
@@ -51,6 +52,8 @@ struct Triangle {
 class Triangles {
 private:
     RenderManager* renderManager;
+
+    vector<string> textureNames;
 
     Vertex* vertices;
     int vertexCount, vertexCapacity;
@@ -60,6 +63,9 @@ private:
 public:
     Triangles(RenderManager* renderManager);
     ~Triangles();
+
+    void saveTriangles(FILE* fp);
+    void clear();
 
     int addVertex(float x, float y, float u, float v, char r, char g, char b, char a);
     void removeVertex(int v);
@@ -78,8 +84,9 @@ public:
     bool triangleContainsVertex(int t, int v);
     vector<int> getAdjacentVertices(int v);
     vector<int> getAdjacentTriangles(int v);
-    // returns vertices that are only connected to the supplied triangle
+    // returns vertices that are only connected to the supplied triangle (needed for removing)
     vector<int> getIsolatedVertices(int t);
+    // returns -1 if no vertex within minimum distance
     int getClosestVertex(float x, float y);
 
     void draw();

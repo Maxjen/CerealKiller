@@ -79,6 +79,11 @@ TriangleShader::TriangleShader() {
         printf( "%s is not a valid glsl program variable!\n", "modelViewMatrix" );
     }
 
+    /*useTextureLocation = glGetUniformLocation(programId, "useTexture");
+    if (useTextureLocation == -1) {
+        printf( "%s is not a valid glsl program variable!\n", "useTexture" );
+    }*/
+
     GLint textureLocation = glGetUniformLocation(programId, "tex");
     if (textureLocation == -1) {
         printf( "%s is not a valid glsl program variable!\n", "tex" );
@@ -94,6 +99,10 @@ void TriangleShader::setProjectionMatrix(glm::mat4 projectionMatrix) {
 void TriangleShader::setModelViewMatrix(glm::mat4 modelViewMatrix) {
     glUniformMatrix4fv(modelViewMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelViewMatrix));
 }
+
+/*void TriangleShader::setUseTexture(int useTexture) {
+    glUniform1i(useTextureLocation, useTexture);
+}*/
 
 void TriangleShader::setPositionPointer(GLsizei stride, const GLvoid* offset) {
     glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, stride, offset);

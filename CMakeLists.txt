@@ -13,23 +13,42 @@ set(SRC_LIST
 	Shader/Shader.cpp
 	ResourceManager.cpp
 	RenderManager.cpp
+	Action.cpp
+	ActionManager.cpp
+	ActionHandler.cpp
 	Layer.cpp
+
+	Context.cpp
+	MapEditor/MapEditor.cpp
+	MapEditor/Actions/SelectVertices.cpp
+	MapEditor/Actions/RemoveSelection.cpp
+	MapEditor/Actions/MoveSelection.cpp
+	MapEditor/Actions/ScaleSelection.cpp
+	MapEditor/Actions/RotateSelection.cpp
+	MapEditor/Actions/CreateTriangle.cpp
+	MapEditor/Actions/FillTriangle.cpp
+	MapEditor/ActionHandler/MoveHandler.cpp
+	MapEditor/ActionHandler/ScaleHandler.cpp
+	MapEditor/ActionHandler/RotationHandler.cpp
+	MapEditor/ActionHandler/TriangleCreationHandler.cpp
+
 	Triangles.cpp
 	Selection.cpp
-	Actions/Action.cpp
-	Actions/ActionManager.cpp
-	Actions/SelectVertices.cpp
-	Actions/RemoveSelection.cpp
-	Actions/MoveSelection.cpp
-	Actions/ScaleSelection.cpp
-	Actions/RotateSelection.cpp
-	Actions/CreateTriangle.cpp
-	Actions/FillTriangle.cpp
-	ActionHandler/ActionHandler.cpp
-	ActionHandler/MoveHandler.cpp
-	ActionHandler/ScaleHandler.cpp
-	ActionHandler/RotationHandler.cpp
-	ActionHandler/TriangleCreationHandler.cpp
+
+	CharacterEditor/CharacterEditor.cpp
+	CharacterEditor/CharSelection.cpp
+	CharacterEditor/BoneLayer.cpp
+	CharacterEditor/Actions/SelectBoneVertices.cpp
+	CharacterEditor/Actions/RemoveBoneSelection.cpp
+	CharacterEditor/Actions/MoveBoneSelection.cpp
+	CharacterEditor/Actions/ScaleBoneSelection.cpp
+	CharacterEditor/Actions/RotateBoneSelection.cpp
+	CharacterEditor/Actions/CreateBone.cpp
+	CharacterEditor/ActionHandler/MoveBoneHandler.cpp
+	CharacterEditor/ActionHandler/ScaleBoneHandler.cpp
+	CharacterEditor/ActionHandler/RotationBoneHandler.cpp
+	CharacterEditor/ActionHandler/BoneCreationHandler.cpp
+	Bones.cpp
 	Core.cpp
 	main.cpp
 )

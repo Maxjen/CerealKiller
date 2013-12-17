@@ -37,9 +37,13 @@ Texture::~Texture() {
 }
 
 Texture* ResourceManager::getTexture(const char* textureName) {
-    textures[textureName].counter++;
+    map<string, TextureInternal>::iterator it = textures.find(textureName);
+    if (it != textures.end())
+        textures[textureName].counter++;
 	
-    if(textures[textureName].counter == 1) {
+    //if(textures[textureName].counter == 1) {
+    else {
+        textures[textureName].counter = 1;
         textures[textureName].name = textureName;
 
         SDL_Surface* textureImage;

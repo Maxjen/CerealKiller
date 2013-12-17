@@ -23,43 +23,29 @@
     OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef CK_TRIANGLE_SHADER_H
-#define CK_TRIANGLE_SHADER_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "Shader.h"
+#ifndef CK_MOVEHANDLER_H
+#define CK_MOVEHANDLER_H
+
+#include "../../ActionHandler.h"
+#include "../../ActionManager.h"
+#include "../Actions/MoveSelection.h"
 
 namespace ck {
 
-class TriangleShader : public Shader {
+class MoveHandler : public ActionHandler {
 private:
-    GLint positionLocation;
-    GLint texCoordLocation;
-    GLint colorLocation;
-    GLint projectionMatrixLocation;
-    GLint modelViewMatrixLocation;
-    //GLint useTextureLocation;
+    Selection* selection;
+    Triangles* triangles;
+    ActionManager* actionManager;
+    MoveSelection* moveSelection;
+    Vec2 deltaPosition;
+    vector<int> selectedVertices;
 public:
-    TriangleShader();
-
-    void setProjectionMatrix(glm::mat4 projectionMatrix);
-    void setModelViewMatrix(glm::mat4 modelViewMatrix);
-    //void setUseTexture(int useTexture);
-
-    void setPositionPointer(GLsizei stride, const GLvoid* offset);
-    void setTexCoordPointer(GLsizei stride, const GLvoid* offset);
-    void setColorPointer(GLsizei stride, const GLvoid* offset);
-
-    void enablePositionPointer();
-    void enableTexCoordPointer();
-    void enableColorPointer();
-
-    void disablePositionPointer();
-    void disableTexCoordPointer();
-    void disableColorPointer();
+    MoveHandler(Selection* selection, Triangles* triangles, ActionManager* actionManager);
+    bool handleEvent(SDL_Event* event);
 };
 
 }
 
-#endif // CK_TRIANGLE_SHADER_H
+#endif // CK_MOVEHANDLER_H
