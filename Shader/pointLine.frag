@@ -1,9 +1,9 @@
 /* Fragment shader */
 
-#version 400 core
+#version 300 es
 
-in vec4 ex_Color;
-out vec4 out_Color;
+in lowp vec4 ex_Color;
+out lowp vec4 out_Color;
 
 void main()
 {

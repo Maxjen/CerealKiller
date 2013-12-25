@@ -1,14 +1,14 @@
 /* Vertex shader */
 
-#version 400 core
+#version 300 es
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelViewMatrix;
 //uniform vec4 red;
 
-in vec2 in_Position;
-in vec4 in_Color;
-out vec4 ex_Color;
+in mediump vec2 in_Position;
+in lowp vec4 in_Color;
+out lowp vec4 ex_Color;
  
 void main(void)
 {

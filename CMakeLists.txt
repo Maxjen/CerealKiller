@@ -55,8 +55,10 @@ set(SRC_LIST
 
 #SDL2 plus dependencies
 set(SDL2
-    /usr/local/lib/libSDL2.a
-	/usr/local/lib/libSDL2_image.a
+    #/usr/local/lib/libSDL2.a
+    /usr/lib64/libSDL2.so
+    #/usr/local/lib/libSDL2_image.a
+    /usr/lib64/libSDL2_image.so
     pthread
     dl
     rt

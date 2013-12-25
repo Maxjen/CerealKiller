@@ -1,13 +1,13 @@
 /* Fragment shader */
 
-#version 400 core
+#version 300 es
 
 uniform sampler2D tex;
 //uniform int useTexture;
 
-in vec2 ex_TexCoord;
-in vec4 ex_Color;
-out vec4 out_Color;
+in mediump vec2 ex_TexCoord;
+in lowp vec4 ex_Color;
+out lowp vec4 out_Color;
 
 void main()
 {
